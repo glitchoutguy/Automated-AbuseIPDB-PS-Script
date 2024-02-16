@@ -1,10 +1,10 @@
-﻿# Function to query AbuseIPDB API
+# Function to query AbuseIPDB API
 function Get-AbuseIPReport {
     param(
         [string]$ipAddress
     )
 
-    $apiKey = "YOUR API KEY HERE"
+    $apiKey = "65ee3ed8d321f674dc2aa0142ceffdf347924173b3b8c568a9f8dbf489e762bc8e1e5026ed2de509"
     $url = "https://api.abuseipdb.com/api/v2/check?ipAddress=$ipAddress"
 
     $headers = @{
@@ -68,17 +68,33 @@ while ($true) {
     foreach ($ipAddress in $foreignAddresses) {
         $abuseReport = Get-AbuseIPReport -ipAddress $ipAddress
         if ($abuseReport.data.totalReports -gt 0) {
-            Write-Host "IP $ipAddress has reports!"
-            $ipsWithDetections += $ipAddress
+            # Construct additional information
+            $additionalInfo = "`tNumber of Reports: $($abuseReport.data.totalReports)`n`tConfidence of Abuse: $($abuseReport.data.abuseConfidenceScore)`n`tCountry: $($abuseReport.data.countryCode)`n`tDomain: $($abuseReport.data.domain)`n`tISP: $($abuseReport.data.isp)"
+    
+            # Construct output string
+            $output = "IP $ipAddress has reports!`n$additionalInfo"
+    
+            $ipsWithDetections += $output  # Store complete output for grouping
         } else {
             $ipsWithoutDetections += $ipAddress
         }
         Mark-Checked -ipAddress $ipAddress
     }
 
-    # Notify on each checked IP
-    $ipsWithDetections | ForEach-Object { Write-Host "IP $_ has reports!" }
-    $ipsWithoutDetections | ForEach-Object { Write-Host "IP $_ has no reports." }
+# Notify on IPs with detections
+if ($ipsWithDetections.Count -gt 0) {
+    Write-Host "`nIP's with detections:"
+    $ipsWithDetections | ForEach-Object { Write-Host "$_" }
+}
+
+# Add two lines of space between sections
+Write-Host "`n`n"
+
+# Notify on IPs without detections
+if ($ipsWithoutDetections.Count -gt 0) {
+    Write-Host "IP's without detections:"
+    $ipsWithoutDetections | ForEach-Object { Write-Host "$_" }
+}
 
     # Sleep for n seconds before the next iteration
     Start-Sleep -Seconds 300  # Adjust as needed
