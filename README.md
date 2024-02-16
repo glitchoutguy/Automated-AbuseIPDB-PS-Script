@@ -1,4 +1,4 @@
-Very barebones version of an automated IP address checker.
+Script that takes the output of netstat and checks the established connections against AbuseIPDB
 
 To use the script, navigate to the abuseipdb website, sign in and create your own API key:
 
