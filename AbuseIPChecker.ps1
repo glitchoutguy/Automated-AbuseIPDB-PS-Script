@@ -4,7 +4,7 @@ function Get-AbuseIPReport {
         [string]$ipAddress
     )
 
-    $apiKey = "65ee3ed8d321f674dc2aa0142ceffdf347924173b3b8c568a9f8dbf489e762bc8e1e5026ed2de509"
+    $apiKey = "YOUR API KEY HERE"
     $url = "https://api.abuseipdb.com/api/v2/check?ipAddress=$ipAddress"
 
     $headers = @{
